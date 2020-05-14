@@ -44,7 +44,7 @@ The following step shows how to clone this project in IntelliJ and start contrib
 3.7 Update the project (click merge all the incoming change)<br>
 
 If you build and run, you might receive Error: EPERM. Please follow the install library step below.<br>
-If you receive new error saying that the metro service is running from wrong place and need to be shutdown and reopen, please see the last section that say Metro service error at the end of this file.<br>
+If you receive new error saying that the metro server is running from wrong place and need to be stop and restart, please see the last section that say Metro service error at the end of this file.<br>
 
 Install Library
 ---
