@@ -30,12 +30,14 @@ Cloning this project into your dev environment
 ---
 The following step shows how to clone this project in IntelliJ and start contribute to it
 1. Create your own react native project. You can name it whatever but hello_ml_frontend is recommended :)
-2. Verify that your newly created project builds and run, especially if it run on emulator or not!!
+2. Verify that your newly created project builds and run, especially if it run on emulator or not!! If not, please refer to the setup section above. You need your react native working before proceeding!!
 3. Set up git as following<br>
-3.1 VCS->enable version control integration<br> 
-3.2 VCS->Git->Remote->Add the GitHub repository<br>
-3.3 Right click project->Git->repository->branches->Remote->check out, then you will be prompt with an error message, click file there->Delete all file there<br>
-3.4 Then repeat the above
+3.1 VCS->enable version control integration (click git when prompt)<br> 
+3.2 VCS->Git->Remote->Add the GitHub repository with whatever name you want and url: https://github.com/0429charlie/hello_ml_frontend.git<br>
+3.3 VCS->Git->Pull
+3.4 Right click project->Git->repository->branches->Remote->check out, then you will be prompt with an error message, click file there->Delete all file there<br>
+3.5 Then repeat the above and wait for the indexing to finish
+3.6 Finally, update the project
 
 Install Library
 ---
