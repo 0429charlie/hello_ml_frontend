@@ -35,7 +35,7 @@ class App extends Component {
   constructor(props) {
     super();
     this.state = {
-      file: '',
+      file: null,
       label: 'wefjwelkfj',
     };
     this.chooseFile = this.chooseFile.bind(this);
@@ -63,8 +63,6 @@ class App extends Component {
         console.log('User tapped custom button: ', response.customButton);
         alert(response.customButton);
       } else {
-        // You can also display the image using data:
-        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
         this.setState({
           file: response,
         });
@@ -74,22 +72,15 @@ class App extends Component {
 
   async snedRequest() {
     const formData = new FormData();
-    console.log(this.state.file.uri);
-    console.log(this.state.file.type);
-    console.log(this.state.file.name);
-    formData.append('photo', {
-      uri: this.state.file.uri,
-      name: this.state.file.name,
-      type: this.state.file.name,
-    });
-    //formData.append('photo', this.state.file)
-    formData.append('Content-Type', this.state.file.type);
-    axios
-      .post('https://hello-ml-4pv5qti4qa-uw.a.run.app/predict', {
-        formData,
-      })
+    formData.append('photo', this.state.file);
+    // When testing on local host, use the format http://[local ip]:port/ where [local ip] can be acquired by typing ipconfig in command prompt
+    await axios
+      .post('http://10.0.0.134:80/predict', {formData})
+      //.post('https://hello-ml-4pv5qti4qa-uw.a.run.app/predict', {
       .then(res => {
-        console.log(res.data);
+        this.setState({
+          label: res.data,
+        });
       });
     /*
     console.log('fetching');
@@ -162,12 +153,15 @@ class App extends Component {
                     Select image
                   </Text>
                 </TouchableOpacity>
-                <Image
-                  source={{
-                    uri: this.state.file.uri,
-                  }}
-                  style={styles.img_dimension}
-                />
+                {this.state.file && (
+                  <Image
+                    source={{
+                      // inline if-else statement
+                      uri: this.state.file.uri,
+                    }}
+                    style={styles.img_dimension}
+                  />
+                )}
                 <TouchableOpacity>
                   <Text
                     styles={styles.sectionDescription}

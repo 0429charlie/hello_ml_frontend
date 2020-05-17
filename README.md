@@ -4,11 +4,66 @@ It is in React Native and can run on both Android and iOS. The project is an one
 
 API format
 ---
-Investigating. To be updated.
+we use react-native-image-picker library for picking the image. The image picker is call as following.<br>
+```
+let options = {
+    title: 'Select Image',
+    customButtons: [
+        {name: 'customOptionKey', title: 'Choose Photo from Custom Option'},
+    ],
+    storageOptions: {
+        skipBackup: true,
+        path: 'images',
+    },
+};
+ImagePicker.showImagePicker(options, response => {
+    if (response.didCancel) {
+        console.log('User cancelled image picker');
+    } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+        alert(response.customButton);
+    } else {
+        console.log(response);
+    }
+});
+```
+the response is then in the form of:<br>
+```
+ {"data": base64 string,"fileName": string,"fileSize": int,"height": int,"isVertical": bool,"orininalRotation": 0,"path": string,"timestamp": DateTime,"type": string,"uri": string,"width": int}<br>
+```
+Next, this response is then encoded with formData as follow (note that response is the same response as above)<br>
+```
+import FormData from 'form-data';
+const formData = new FormData();
+formData.append('photo', response);
+```
+Then sent to the server using axio<br>
+```
+import axios from 'axios';
+await axios
+    .post('API_url', {formData})
+    .then(res => {
+        console.log(res.data);
+    });
+```
+Note that API_url is the endpoint that you want to send the request to. If testing locally, please use http://[local ip]:port/ where [local ip] can be acquired by typing ipconfig in command prompt<br>
+
+In the server side, we get request which is in the from of:<br>
+```
+{'formData': {'_parts': [['photo', {'height': int, 'width': int, 'type': string, 'fileName': string, 'path': string, 'fileSize': int, 'data': base63 string, 'uri': string, 'isVertical': bool, 'originalRotation': int, 'timestamp': DateTime}]]}}
+```
+Note that it start with the key 'formData' then '_parts'. Inside the '_parts', we get a list where each element is a tuple generated from each formData.append(key, value) call. In this case, we only called formData.append('photo', response) once so we only have 1 element with first of tuple to be the key 'photo' and second is the response that we get from the image-picker library (the order of the key in the response might be different after encoding with formData but the content are the same).<br>
+
+The server than return a string indicating the label which can be access by res.data (see the then statement at axio call above).<br>
+
+*When using this as template for other project, consider sending the information needed only when encode with the formData. For example, server should not care about the path to the image on the edge device thus 'path' field is not needed
+
 
 Setup
 ---
-1. Install Node, Python2, and JDK (run as admin)<br> 
+1. Install Node, Python2, and JDK (run as admin)<br>
 choco install -y nodejs.install python2 jdk8<br>
 2. Download Android Studio<br>
 3. Install Android SDK<br>
@@ -48,24 +103,57 @@ If you receive new error saying that the metro server is running from wrong plac
 
 Install Library
 ---
-1. Install React Native Image Picker (from the project root)<br>
-npm i react-native-image-picker<br>
+1. Install React Native Image Picker (run in IntelliJ terminal from the project root)<br>
+    ```
+    npm install react-native-image-picker --save
+    ```
+    or (if you want a specific version)<br>
+    ```
+    npm install react-native-image-picker@1.1.0 --save
+    ```
 2. Linking Dependency<br>
-react-native link react-native-image-picker<br>
-cd android && gradlew clean<br>
+    ```
+    react-native link react-native-image-picker
+    cd android && gradlew clean<br>
+    cd ..
+    cd ios
+    pod install
+    cd ..
+    ```
 3. Set camera permission for Android<br>
 Project->android->app->src->main->AndroidManifest.xml<br>
 Add the following (ignore if already there):
-````
-<uses-permission android:name="android.permission.CAMERA"/>
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-````
-4. Go back to the project root and install form-data<br>
-npm install --save form-data<br>
-5. Install axios<br>
-npm install axios<br>
-6. fund the project<br>
-npm fund<br>
+    ````
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    ````
+4. Stop your Packager or Bundler and re-run it again
+    ```
+    npm start --rest-cache
+    ```
+5. Modify the Info.plist under the path: ios/[Your Local Porject Name]/Images.xcasseets/ and look for “Info.plist” and add the following code after the dictionary tag<br>
+    ```
+        <string>$HELLOML would like access to your photo gallery</string>
+        <key>NSCameraUsageDescription</key>
+        <string>$HELLOML would like to use your camera</string>
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>$HELLOML would like to save photos to your photo gallery</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>$(HELLOML would like to use your microphone (for videos)</string>
+    ```
+   Note that $HELLOML can be replaced by whatever app name you want the app to show when prompting the user to gain permission.
+6. install form-data (make sure you are at the project root)<br>
+    ```
+    npm install --save form-data<br>
+    ```
+7. Install axios<br>
+    ```
+    npm install axios<br>
+    ```
+8. fund the project<br>
+    ```
+    npm fund<br>
+    ```
 
 Metro Service Error
 ---
