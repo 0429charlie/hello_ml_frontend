@@ -75,7 +75,8 @@ class App extends Component {
     formData.append('photo', this.state.file);
     // When testing on local host, use the format http://[local ip]:port/ where [local ip] can be acquired by typing ipconfig in command prompt
     await axios
-      .post('http://10.0.0.134:80/predict', {formData})
+      //.post('http://10.0.0.134:80/predict', {formData})
+      .post('https://hello-ml-4pv5qti4qa-uw.a.run.app/predict', {formData})
       //.post('https://hello-ml-4pv5qti4qa-uw.a.run.app/predict', {
       .then(res => {
         this.setState({

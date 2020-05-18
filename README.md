@@ -114,7 +114,7 @@ Install Library
 2. Linking Dependency<br>
     ```
     react-native link react-native-image-picker
-    cd android && gradlew clean<br>
+    cd android && gradlew clean
     cd ..
     cd ios
     pod install
